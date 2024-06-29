@@ -77,7 +77,6 @@ HardwareTimer::HardwareTimer(TIM_TypeDef *instance)
     NVIC_EnableIRQ(TIM2_IRQn);
   #endif
 #endif
-#endif
 
 #if defined(TIM3_BASE) && !defined(CH32VM00X)  //v006 has no interruption
   NVIC_EnableIRQ(TIM3_IRQn);  
@@ -1611,6 +1610,30 @@ extern "C" {
 #endif //TIM1_BASE
 
 #if defined(TIM2_BASE)
+
+  #if defined(CH32X035)
+     /**
+    * @brief  TIM1 IRQHandler 
+    * @param  None
+    * @retval None
+    */
+  void TIM2_UP_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+  void TIM2_UP_IRQHandler(void)
+  {
+    if (HardwareTimer_Handle[TIMER2_INDEX]) {
+      HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER2_INDEX]->handle);
+    }
+  }
+
+  void TIM2_CC_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+  void TIM2_CC_IRQHandler(void)
+  {
+    if (HardwareTimer_Handle[TIMER2_INDEX]) {
+      HardwareTimer::captureCompareCallback(&HardwareTimer_Handle[TIMER2_INDEX]->handle);
+    }
+  }
+
+  #else
   /**
     * @brief  TIM2 IRQHandler
     * @param  None
@@ -1625,6 +1648,8 @@ extern "C" {
       HardwareTimer::captureCompareCallback(&HardwareTimer_Handle[TIMER2_INDEX]->handle);
     }
   }
+  #endif
+
 #endif //TIM2_BASE
 
 #if defined(TIM3_BASE)

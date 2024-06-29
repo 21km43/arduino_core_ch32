@@ -558,4 +558,3 @@ uint32_t getTimerChannel(PinName pin)
 }
 #endif
 
-
