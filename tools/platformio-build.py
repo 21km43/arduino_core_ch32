@@ -130,7 +130,7 @@ env.Replace(
 )
 
 def configure_usb_flags(cpp_defines):
-    if any([x in cpp_defines for x in ("PIO_FRAMEWORK_ARDUINO_USBD", "PIO_FRAMEWORK_ARDUINO_USBFS")]):
+    if any([x in cpp_defines for x in ("PIO_FRAMEWORK_ARDUINO_USBD", "PIO_FRAMEWORK_ARDUINO_USBFS", "PIO_FRAMEWORK_ARDUINO_USBHS")]):
         env.Append(CPPPATH=[join(
             FRAMEWORK_DIR, "libraries", "Adafruit_TinyUSB_Arduino", "src", "arduino")])
         # automatically build with lib_archive = no to make weak linking work, needed for TinyUSB
@@ -142,6 +142,8 @@ def configure_usb_flags(cpp_defines):
         env.Append(CPPDEFINES=[("CFG_TUD_WCH_USBIP_FSDEV", 1)]) 
     elif "PIO_FRAMEWORK_ARDUINO_USBFS" in cpp_defines:
         env.Append(CPPDEFINES=[("CFG_TUD_WCH_USBIP_USBFS", 1)])
+    elif "PIO_FRAMEWORK_ARDUINO_USBHS" in cpp_defines:
+        env.Append(CPPDEFINES=[("CFG_TUD_WCH_USBIP_USBHS", 1)])
     # in any case, add standard flags
     # preferably use USB information from arduino.openwch section,
     # but fallback to sensible values derived from other parts otherwise.
@@ -168,7 +170,7 @@ def configure_usb_flags(cpp_defines):
 #
 cpp_defines = env.Flatten(env.get("CPPDEFINES", []))
 # Ignore TinyUSB automatically if not active without requiring ldf_mode = chain+
-if not any([x in cpp_defines for x in ("PIO_FRAMEWORK_ARDUINO_USBD", "PIO_FRAMEWORK_ARDUINO_USBFS")]):
+if not any([x in cpp_defines for x in ("PIO_FRAMEWORK_ARDUINO_USBD", "PIO_FRAMEWORK_ARDUINO_USBFS", "PIO_FRAMEWORK_ARDUINO_USBHS")]):
     env_section = "env:" + env["PIOENV"]
     ignored_libs = platform.config.get(env_section, "lib_ignore", [])
     if not "Adafruit TinyUSB Library" in ignored_libs:
